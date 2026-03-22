@@ -1,4 +1,4 @@
-{pkgs ? import <nixpkgs> {}}:
+{ pkgs, lib, ... }:
 pkgs.rustPlatform.buildRustPackage {
   pname = "glacierd";
   version = "0.0.1";
@@ -8,20 +8,15 @@ pkgs.rustPlatform.buildRustPackage {
     filter = path: type: !(type == "directory" && builtins.baseNameOf path == "target");
   };
 
-  cargoLock = {
-    lockFile = ./glacierd/Cargo.lock;
-  };
+  cargoLock.lockFile = ./glacierd/Cargo.lock;
 
-  nativeBuildInputs = [pkgs.mold];
-
+  nativeBuildInputs = [ pkgs.mold ];
   env.RUSTFLAGS = "-C link-arg=-fuse-ld=mold";
-
-  # avoid running cargo tests during build
   doCheck = false;
 
-  meta = with pkgs.lib; {
+  meta = {
     description = "Glacier D-Bus daemon";
-    license = licenses.gpl3;
-    platforms = platforms.linux;
+    license = lib.licenses.gpl3;
+    platforms = lib.platforms.linux;
   };
 }
