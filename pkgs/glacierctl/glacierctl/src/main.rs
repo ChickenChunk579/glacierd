@@ -12,6 +12,7 @@ use std::io::{BufRead, BufReader};
 use std::path::Path;
 use std::process::{Command, Stdio};
 use std::time::Duration;
+use std::os::unix::process::CommandExt;
 use zbus::{proxy, Connection};
 
 #[proxy(
