@@ -6,8 +6,8 @@
   let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
-    glacierd = pkgs.callPackage ../pkgs/glacierd/default.nix { };
-    glacierctl = pkgs.callPackage ../pkgs/glacierctl/default.nix { };   
+    glacierd = pkgs.callPackage ./pkgs/glacierd/default.nix { };
+    glacierctl = pkgs.callPackage ./pkgs/glacierctl/default.nix { };   
   in {
     nixosModules.glacierd = {
       imports = [ ./modules/glacierd.nix ];
