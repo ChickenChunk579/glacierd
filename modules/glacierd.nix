@@ -17,8 +17,7 @@
 	    ];
 
 	    serviceConfig = {
-	      # Path to your binary (assuming it's in your system packages or flake)
-	      ExecStart = "${glacierd}/bin/glacierd";
+	      ExecStart = "${glacierd-pkg}/bin/glacierd";
 	      
 	      # Run as root to allow system-level nixos-rebuild
 	      User = "root";
@@ -56,6 +55,6 @@
 	    })
 	  ];
 
-	  environment.systemPackages = [glacierctl];  	
+	  environment.systemPackages = [glacierctl-pkg];  	
   };
 }
