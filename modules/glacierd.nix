@@ -1,4 +1,4 @@
-{ config, lib, pkgs, glacierd-pkg, glacierctl-pkg ... }:
+{ config, lib, pkgs, glacierd-pkg, glacierctl-pkg, ... }:
 {
   options.services.glacierd.enable = lib.mkEnableOption "Enable the Glacier Daemon";
   config = lib.mkIf config.services.glacierd.enable {
