@@ -1,0 +1,14 @@
+[package]
+name = "glacierctl"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.6.0", features = ["derive"] }
+colored = "3.1.1"
+futures-util = "0.3.32"
+indicatif = "0.18.4"
+tokio = { version = "1.50.0", features = ["full"] }
+zbus = "5.14.0"
+regex = "1.10"
+dialoguer = "0.12.0"
