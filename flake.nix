@@ -18,7 +18,7 @@
     };
     nixosModules.default = self.nixosModules.glacierd;
 
-    packages.${system} = rec {
+    packages.${system} = {
       glacierd = glacierd;
       glacierctl = glacierctl;
     };
