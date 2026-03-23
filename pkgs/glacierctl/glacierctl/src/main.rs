@@ -462,9 +462,7 @@ fn run_nixos_install(flake_target: &str, glacier_dir: &str) -> Result<bool, Box<
         .args([
             "--flake",
             flake_target,
-            "--log-format",
-            "bar-with-logs",
-            "-L",
+            "--verbose",
             "--show-trace",
         ])
         .current_dir(glacier_dir)
