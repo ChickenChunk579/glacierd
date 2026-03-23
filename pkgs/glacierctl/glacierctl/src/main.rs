@@ -464,6 +464,7 @@ fn run_nixos_install(flake_target: &str, glacier_dir: &str) -> Result<bool, Box<
             flake_target,
             "--verbose",
             "--show-trace",
+            "--no-channel-copy"
         ])
         .current_dir(glacier_dir)
         .process_group(0)
@@ -675,7 +676,7 @@ fn run_install() -> Result<(), Box<dyn Error>> {
     };
 
     // ── 4. Filesystem ───────────────────────────────────────────────────────
-    let fs_type = pick("Root filesystem type", &["ext4", "btrfs", "xfs"]);
+    let fs_type = pick("Root filesystem type", &["ext4", "btrfs", "xfs", "bcachefs"]);
 
     // Confirm before wiping
     println!(
@@ -737,6 +738,17 @@ fn run_install() -> Result<(), Box<dyn Error>> {
         let _ = Command::new("partprobe").arg(&disk_device).output();
         std::thread::sleep(Duration::from_millis(500));
 
+        run_cmd_spinner(
+			"Cleaning EFI partition...",
+			"wipefs",
+			&["-a", &efi_part]
+        );
+        run_cmd_spinner(
+        	"Cleaning root partition...",
+        	"wipefs",
+        	&["-a", &root_part]
+        );
+
         // Derive partition names (handles /dev/sda -> /dev/sda1, /dev/nvme0n1 -> /dev/nvme0n1p1)
         let (efi_part, root_part) = derive_partitions(&disk_device);
 
@@ -795,6 +807,12 @@ fn run_install() -> Result<(), Box<dyn Error>> {
         std::thread::sleep(Duration::from_millis(500));
 
         let (root_part, _) = derive_partitions(&disk_device);
+
+        run_cmd_spinner(
+            "Cleaning root partition...",
+            "wipefs",
+            &["-a", &root_part]
+        );
 
         run_cmd_spinner(
             &format!("Formatting root partition as {}...", fs_type.cyan()),
