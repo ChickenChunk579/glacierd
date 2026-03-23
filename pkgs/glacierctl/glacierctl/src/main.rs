@@ -738,6 +738,9 @@ fn run_install() -> Result<(), Box<dyn Error>> {
         let _ = Command::new("partprobe").arg(&disk_device).output();
         std::thread::sleep(Duration::from_millis(500));
 
+        // Derive partition names (handles /dev/sda -> /dev/sda1, /dev/nvme0n1 -> /dev/nvme0n1p1)
+        let (efi_part, root_part) = derive_partitions(&disk_device);
+
         run_cmd_spinner(
 			"Cleaning EFI partition...",
 			"wipefs",
@@ -748,9 +751,6 @@ fn run_install() -> Result<(), Box<dyn Error>> {
         	"wipefs",
         	&["-a", &root_part]
         );
-
-        // Derive partition names (handles /dev/sda -> /dev/sda1, /dev/nvme0n1 -> /dev/nvme0n1p1)
-        let (efi_part, root_part) = derive_partitions(&disk_device);
 
         run_cmd_spinner(
             "Formatting EFI partition as FAT32...",
