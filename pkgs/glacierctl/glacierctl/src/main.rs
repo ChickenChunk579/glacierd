@@ -8,7 +8,7 @@ use std::collections::HashMap;
 use std::env;
 use std::error::Error;
 use std::fs;
-use std::io::{BufRead, BufReader};
+use std::io::{self, Read, BufRead, BufReader};
 use std::path::Path;
 use std::process::{Command, Stdio};
 use std::time::Duration;
@@ -961,16 +961,43 @@ fn run_install() -> Result<(), Box<dyn Error>> {
     // ── 10. nixos-install ────────────────────────────────────────────────────
     println!("\n{}", "── Installing ───────────────────────────".dimmed());
     let flake_target = format!(".#{}", system_name);
-    let install_ok = run_nixos_install(&flake_target, glacier_dir)?;
-
-    if !install_ok {
+    
+    loop {
+        let install_ok = run_nixos_install(&flake_target, glacier_dir)?;
+    
+        if install_ok {
+            break;
+        }
+    
         eprintln!(
             "\n{}",
             "❌ Installation failed. Check the output above for errors."
                 .red()
                 .bold()
         );
-        std::process::exit(1);
+    
+        eprintln!(
+            "\n{}",
+            "If you hit a random Nix flake error, retrying often fixes it."
+                .yellow()
+        );
+    
+        eprintln!(
+            "\n{}",
+            "Press Enter to try again or Esc to exit."
+                .cyan()
+                .bold()
+        );
+    
+        let mut buffer = [0; 1];
+        io::stdin().read_exact(&mut buffer)?;
+    
+        if buffer[0] == 27 {
+            // ESC key
+            std::process::exit(1);
+        }
+    
+        println!("{}", "↻ Retrying installation...\n".dimmed());
     }
 
     println!(
